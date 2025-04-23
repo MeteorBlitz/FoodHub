@@ -21,7 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
+import coil.compose.AsyncImage
+import com.example.foodhub.components.RestaurantCard
 import com.example.foodhub.model.RestaurantData
 import com.example.foodhub.ui.theme.FoodHubTheme
 
@@ -29,38 +30,17 @@ import com.example.foodhub.ui.theme.FoodHubTheme
 fun HomeScreen(navController: NavController) {
     val restaurantList = RestaurantData.restaurantList
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(restaurantList) { restaurant ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        navController.navigate("restaurant_detail/${restaurant.id}")
-                    },
-                elevation = CardDefaults.cardElevation(6.dp)
-            ) {
-                Column {
-                    AsyncImage(
-                        model = restaurant.image_url,
-                        contentDescription = restaurant.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                    )
-                    Text(
-                        text = restaurant.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    Text(
-                        text = "${restaurant.location} • ⭐ ${restaurant.rating}",
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
-                    )
+    Column {
+        Text(
+            text = "Restaurants",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(16.dp)
+        )
+
+        LazyColumn {
+            items(restaurantList) { restaurant ->
+                RestaurantCard(restaurant = restaurant) {
+                    navController.navigate("restaurantDetail/${restaurant.id}")
                 }
             }
         }
