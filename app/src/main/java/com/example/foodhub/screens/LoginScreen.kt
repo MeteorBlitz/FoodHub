@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -46,6 +47,9 @@ fun LoginScreen(navController: NavController) {
     // Button animation state
     val buttonScale = remember { Animatable(1f) }
 
+    // Logo animation state
+    val logoAlpha = remember { Animatable(0f) }
+
     // Handle focus changes (e.g., email field focus)
     val emailFocusRequester = FocusRequester.Default
     val passwordFocusRequester = FocusRequester.Default
@@ -59,6 +63,14 @@ fun LoginScreen(navController: NavController) {
         buttonScale.animateTo(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 300)
+        )
+    }
+
+    // Trigger logo fade-in animation
+    LaunchedEffect(Unit) {
+        logoAlpha.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 1000)
         )
     }
 
@@ -78,6 +90,7 @@ fun LoginScreen(navController: NavController) {
                 .align(Alignment.Center)
                 .fillMaxWidth()
         ) {
+            // Animated Logo with fade-in
             Image(
                 painter = rememberVectorPainter(FoodHubLogo),
                 contentDescription = "App Logo",
@@ -85,6 +98,7 @@ fun LoginScreen(navController: NavController) {
                     .size(100.dp)
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 16.dp)
+                    .alpha(logoAlpha.value) // Applying fade-in effect
             )
             Text(
                 text = "FoodHub",
@@ -94,13 +108,6 @@ fun LoginScreen(navController: NavController) {
                     .align(Alignment.CenterHorizontally)
                     .padding(bottom = 32.dp)
             )
-
-//            Text(
-//                text = "FoodHub",
-//                style = MaterialTheme.typography.headlineMedium,
-//                color = Color(0xFF6200EE), // or any vibrant tone
-//                modifier = Modifier.padding(bottom = 32.dp)
-//            )
 
             // Email field with focus animation
             OutlinedTextField(
