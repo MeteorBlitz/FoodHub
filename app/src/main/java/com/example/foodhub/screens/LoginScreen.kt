@@ -1,5 +1,6 @@
 package com.example.foodhub.screens
 
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -32,6 +33,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -53,6 +55,8 @@ fun LoginScreen(navController: NavController) {
     // Handle focus changes (e.g., email field focus)
     val emailFocusRequester = FocusRequester.Default
     val passwordFocusRequester = FocusRequester.Default
+
+    val context = LocalContext.current
 
     // Trigger button animation on value change
     LaunchedEffect(email, password) {
@@ -140,7 +144,19 @@ fun LoginScreen(navController: NavController) {
 
             // Login Button with scaling animation
             Button(
-                onClick = { navController.navigate(Screen.Home.route) },
+                onClick = {
+                    val validEmail = "test@foodhub.com"
+                    val validPassword = "123456"
+
+                    if (email.value == validEmail && password.value == validPassword) {
+                        saveLoginStatus(context, true) // Save to SharedPreferences
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    } else {
+                        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                    }
+                          },
                 modifier = Modifier
                     .fillMaxWidth()
                     .scale(buttonScale.value)

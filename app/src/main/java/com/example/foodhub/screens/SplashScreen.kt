@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -33,6 +34,7 @@ import kotlinx.coroutines.delay
 fun SplashScreen(navController: NavController) {
     // Animation state
     val alpha = remember { Animatable(0f) }
+    val context = LocalContext.current
 
     // Start animation
     LaunchedEffect(Unit) {
@@ -42,7 +44,15 @@ fun SplashScreen(navController: NavController) {
         )
         // Wait for 2 seconds before navigating
         delay(2000)
-        navController.navigate(Screen.Login.route)
+        if (getLoginStatus(context)) {
+            navController.navigate(Screen.Home.route) {
+                popUpTo(Screen.Splash.route) { inclusive = true }
+            }
+        } else {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(Screen.Splash.route) { inclusive = true }
+            }
+        }
     }
 
     // Splash Screen UI
