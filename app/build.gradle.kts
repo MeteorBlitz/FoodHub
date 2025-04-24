@@ -77,4 +77,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     //lifecycle-viewmodel-compose
     implementation(libs.lifecycle.viewmodel.compose)
+    // For state handling
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.runtime.livedata)
 }

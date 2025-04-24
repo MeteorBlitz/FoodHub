@@ -13,7 +13,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodhub.components.BottomNavigationBar
 import com.example.foodhub.navigation.AppNavGraph
 import com.example.foodhub.navigation.bottomBarScreens
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

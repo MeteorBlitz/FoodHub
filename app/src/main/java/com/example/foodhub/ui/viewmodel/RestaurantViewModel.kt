@@ -6,7 +6,7 @@ import com.example.foodhub.data.model.Restaurant
 import com.example.foodhub.data.repository.RestaurantRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,20 +14,19 @@ import javax.inject.Inject
 class RestaurantViewModel @Inject constructor(
     private val repository: RestaurantRepository
 ) : ViewModel() {
-
     private val _restaurants = MutableStateFlow<List<Restaurant>>(emptyList())
-    val restaurants = _restaurants.asStateFlow()
+    val restaurants: StateFlow<List<Restaurant>> = _restaurants
 
-    init {
-        fetchRestaurants()
-    }
 
-    private fun fetchRestaurants() {
+
+    // Fetch restaurants from the repository
+    fun fetchRestaurants() {
         viewModelScope.launch {
             try {
-                _restaurants.value = repository.getRestaurants()
+                val restaurantList = repository.getRestaurants()
+                _restaurants.value = restaurantList
             } catch (e: Exception) {
-                // Handle error
+                // Handle the error
             }
         }
     }

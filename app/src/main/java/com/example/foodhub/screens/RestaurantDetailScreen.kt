@@ -16,17 +16,30 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.foodhub.data.model.RestaurantData
+import com.example.foodhub.ui.viewmodel.RestaurantViewModel
 
 @Composable
-fun RestaurantDetailScreen(navController: NavController, restaurantId: Int) {
-    val restaurant = RestaurantData.restaurantList.find { it.id == restaurantId }
+fun RestaurantDetailScreen(navController: NavController,
+                           restaurantId: Int,
+                           viewModel: RestaurantViewModel = hiltViewModel()) {
+
+    // Fetch the restaurant details from ViewModel
+    val restaurant = viewModel.restaurants.collectAsState().value.find { it.id == restaurantId }
+
+    // Fetch restaurant data if it's not already available
+    LaunchedEffect(restaurantId) {
+        viewModel.fetchRestaurants()
+    }
+
 
     restaurant?.let {
         Column(modifier = Modifier
@@ -88,4 +101,5 @@ fun RestaurantDetailScreen(navController: NavController, restaurantId: Int) {
     } ?: run {
         Text("Restaurant not found!", modifier = Modifier.padding(16.dp))
     }
+
 }
