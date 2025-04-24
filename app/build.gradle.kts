@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -63,4 +65,16 @@ dependencies {
     implementation(libs.coil.compose)
     //material-icons-extended
     implementation(libs.androidx.material.icons.extended)
+    // Accompanist SwipeRefresh
+    implementation(libs.androidx.material)
+    //Retrofit & Gson
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    //hilt-dagger
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)// Only if using Jetpack Compose + HiltViewModel
+    // Use KSP instead of kapt
+    ksp(libs.hilt.compiler)
+    //lifecycle-viewmodel-compose
+    implementation(libs.lifecycle.viewmodel.compose)
 }
