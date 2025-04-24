@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodhub.components.FoodHubLogo
 import com.example.foodhub.navigation.Screen
+import com.example.foodhub.navigation.Screen.BottomBarScreen
 
 @Composable
 fun LoginScreen(navController: NavController) {
@@ -150,7 +151,7 @@ fun LoginScreen(navController: NavController) {
 
                     if (email.value == validEmail && password.value == validPassword) {
                         saveLoginStatus(context, true) // Save to SharedPreferences
-                        navController.navigate(Screen.Home.route) {
+                        navController.navigate(BottomBarScreen.Home.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     } else {

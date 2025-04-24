@@ -25,9 +25,9 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.foodhub.components.FoodHubLogo
 import com.example.foodhub.navigation.Screen
+import com.example.foodhub.navigation.Screen.BottomBarScreen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,7 +45,7 @@ fun SplashScreen(navController: NavController) {
         // Wait for 2 seconds before navigating
         delay(2000)
         if (getLoginStatus(context)) {
-            navController.navigate(Screen.Home.route) {
+            navController.navigate(BottomBarScreen.Home.route) {
                 popUpTo(Screen.Splash.route) { inclusive = true }
             }
         } else {
