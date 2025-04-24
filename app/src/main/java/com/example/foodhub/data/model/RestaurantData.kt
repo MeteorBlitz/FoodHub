@@ -1,4 +1,4 @@
-package com.example.foodhub.model
+package com.example.foodhub.data.model
 
 object RestaurantData {
     val restaurantList = listOf(

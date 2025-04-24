@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.foodhub.model.Restaurant
+import com.example.foodhub.data.model.Restaurant
 
 @Composable
 fun RestaurantCard(restaurant: Restaurant, onClick: () -> Unit) {

@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.foodhub.model.RestaurantData
+import com.example.foodhub.data.model.RestaurantData
 
 @Composable
 fun RestaurantDetailScreen(navController: NavController, restaurantId: Int) {
