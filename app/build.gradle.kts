@@ -80,4 +80,9 @@ dependencies {
     // For state handling
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.runtime.livedata)
+    //Room
+    implementation(libs.androidx.room.runtime) // Room runtime
+    ksp(libs.androidx.room.compiler)        // Room compiler for annotation processing
+    implementation(libs.androidx.room.ktx)     // Room KTX for coroutine support
+
 }
