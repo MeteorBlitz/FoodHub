@@ -9,8 +9,8 @@ import com.example.foodhub.navigation.Screen.BottomBarScreen
 import com.example.foodhub.screens.HomeScreen
 import com.example.foodhub.screens.LoginScreen
 import com.example.foodhub.screens.ProfileScreen
-import com.example.foodhub.screens.RestaurantDetailScreen
 import com.example.foodhub.screens.SplashScreen
+import com.example.foodhub.screens.details.RestaurantDetailScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
