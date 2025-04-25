@@ -76,4 +76,19 @@ class RestaurantViewModel @Inject constructor(
             loadCartItems()  // Reload the cart items after clearing
         }
     }
+
+    fun decreaseCartItemQuantity(name: String) {
+        val updatedList = _cartItems.value.toMutableList()
+        val index = updatedList.indexOfFirst { it.name == name }
+
+        if (index != -1) {
+            val item = updatedList[index]
+            if (item.quantity > 1) {
+                updatedList[index] = item.copy(quantity = item.quantity - 1)
+            } else {
+                updatedList.removeAt(index)
+            }
+            _cartItems.value = updatedList
+        }
+    }
 }
