@@ -22,17 +22,21 @@ fun CartSection(
     Column {
         Text(
             text = "Your Cart",
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(16.dp)
         )
+
         cartItems.forEach { cartItem ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "${cartItem.name} x${cartItem.quantity}", modifier = Modifier.weight(1f))
+                Text(
+                    text = "${cartItem.name} x${cartItem.quantity}",
+                    modifier = Modifier.weight(1f)
+                )
                 Button(onClick = { onRemove(cartItem) }) {
                     Text("Remove")
                 }
