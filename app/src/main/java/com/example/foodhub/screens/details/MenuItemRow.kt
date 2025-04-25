@@ -26,7 +26,7 @@ fun MenuItemRow(
     item: CartItem,
     quantity: Int,
     onAddClick: () -> Unit,
-    onRemoveClick: () -> Unit
+    onRemoveClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier

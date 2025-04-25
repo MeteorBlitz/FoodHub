@@ -17,7 +17,8 @@ import com.example.foodhub.data.local.CartItem
 @Composable
 fun CartSection(
     cartItems: List<CartItem>,
-    onRemove: (CartItem) -> Unit
+    onRemove: (CartItem) -> Unit,
+    onItemRemovedMessage: ((String) -> Unit)? = null // optional callback
 ) {
     Column {
         Text(
@@ -37,7 +38,10 @@ fun CartSection(
                     text = "${cartItem.name} x${cartItem.quantity}",
                     modifier = Modifier.weight(1f)
                 )
-                Button(onClick = { onRemove(cartItem) }) {
+                Button(onClick = {
+                    onRemove(cartItem)
+                    onItemRemovedMessage?.invoke(cartItem.name) //  invoke snackbar from parent
+                }) {
                     Text("Remove")
                 }
             }
