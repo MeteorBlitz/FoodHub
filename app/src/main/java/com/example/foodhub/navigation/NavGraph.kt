@@ -11,7 +11,7 @@ import com.example.foodhub.data.local.UserSessionManager
 import com.example.foodhub.navigation.Screen.BottomBarScreen
 import com.example.foodhub.screens.HomeScreen
 import com.example.foodhub.screens.login.LoginScreen
-import com.example.foodhub.screens.ProfileScreen
+import com.example.foodhub.screens.profile.ProfileScreen
 import com.example.foodhub.screens.SplashScreen
 import com.example.foodhub.screens.details.RestaurantDetailScreen
 import com.example.foodhub.ui.viewmodel.ProfileViewModel
