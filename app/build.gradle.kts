@@ -82,11 +82,10 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     //Room
     implementation(libs.androidx.room.runtime) // Room runtime
+    annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)        // Room compiler for annotation processing
     implementation(libs.androidx.room.ktx)     // Room KTX for coroutine support
     //datastore
     implementation(libs.androidx.datastore.preferences)
-    // For Proto DataStore (if you need complex data storage)
-    implementation(libs.androidx.datastore)
 
 }
