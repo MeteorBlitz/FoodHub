@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,15 +27,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodhub.components.FoodHubLogo
+import com.example.foodhub.data.local.UserSessionManager
 import com.example.foodhub.navigation.Screen
 import com.example.foodhub.navigation.Screen.BottomBarScreen
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavController,userSessionManager: UserSessionManager) {
     // Animation state
     val alpha = remember { Animatable(0f) }
     val context = LocalContext.current
+
+    // Collect login status from UserSessionManager
+    val isLoggedIn = userSessionManager.isLoggedInFlow.collectAsState(initial = false)
 
     // Start animation
     LaunchedEffect(Unit) {
@@ -44,7 +49,7 @@ fun SplashScreen(navController: NavController) {
         )
         // Wait for 2 seconds before navigating
         delay(2000)
-        if (getLoginStatus(context)) {
+        if (isLoggedIn.value) {
             navController.navigate(BottomBarScreen.Home.route) {
                 popUpTo(Screen.Splash.route) { inclusive = true }
             }
