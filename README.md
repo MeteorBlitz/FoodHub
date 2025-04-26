@@ -61,6 +61,9 @@ DataStore
 
 📸 Screenshots
 
+Splash Screen | Login Screen | Home Screen | Details Screen | Profile Screen
+<img src="screenshots/splash.png" width="180"/> | <img src="screenshots/login.png" width="180"/> | <img src="screenshots/home.png" width="180"/> | <img src="screenshots/details.png" width="180"/> | <img src="screenshots/profile.png" width="180"/>
+
 📢 Note
 This project is still a work-in-progress.
 More screens, features, and performance improvements are coming soon. Stay tuned! 🎯
