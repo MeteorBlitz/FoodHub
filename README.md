@@ -61,8 +61,22 @@ DataStore
 
 📸 Screenshots
 
-Splash Screen | Login Screen | Home Screen | Details Screen | Profile Screen
-<img src="screenshots/splash.png" width="180"/> | <img src="screenshots/login.png" width="180"/> | <img src="screenshots/home.png" width="180"/> | <img src="screenshots/details.png" width="180"/> | <img src="screenshots/profile.png" width="180"/>
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/splash.png" width="160"/></td>
+    <td align="center"><img src="screenshots/login.png" width="160"/></td>
+    <td align="center"><img src="screenshots/home.png" width="160"/></td>
+    <td align="center"><img src="screenshots/details.png" width="160"/></td>
+    <td align="center"><img src="screenshots/profile.png" width="160"/></td>
+  </tr>
+  <tr>
+    <td align="center">Splash</td>
+    <td align="center">Login</td>
+    <td align="center">Home</td>
+    <td align="center">Details</td>
+    <td align="center">Profile</td>
+  </tr>
+</table>
 
 📢 Note
 This project is still a work-in-progress.
