@@ -7,9 +7,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -17,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -29,39 +31,19 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController, userSessionManager: UserSessionManager) {
-    // Input fields state
-    var email = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
-
-    // Button scale animation
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
     val buttonScale = remember { Animatable(1f) }
-
-    // Handle UI animations
-    LaunchedEffect(email, password) {
-        buttonScale.animateTo(
-            targetValue = 1.1f,
-            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
-        )
-        buttonScale.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 300)
-        )
-    }
-
-    // Handle login logic
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     val validEmail = "test@foodhub.com"
     val validPassword = "123456"
 
-    // Remember CoroutineScope to launch coroutine
-    val coroutineScope = rememberCoroutineScope()
-
-    // Function to handle login logic
     val handleLogin = {
         val userId = "user123"
         val userName = "testName"
         if (email.value == validEmail && password.value == validPassword) {
-            // Launch coroutine to call suspend function
             coroutineScope.launch {
                 userSessionManager.saveLoginStatus(true, email.value, userId, userName)
             }
@@ -73,21 +55,28 @@ fun LoginScreen(navController: NavController, userSessionManager: UserSessionMan
         }
     }
 
-    // Composable for UI (calling the LoginForm)
+    // Animate button scale on launch
+    LaunchedEffect(email, password) {
+        buttonScale.animateTo(1.1f, animationSpec = tween(300, easing = FastOutSlowInEasing))
+        buttonScale.animateTo(1f, animationSpec = tween(300))
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color.White, Color(0xFFF3E5F5)) // White to light purple
-                )
-            )
-            .padding(32.dp)
+            .background(Color.White)
+            .systemBarsPadding()
     ) {
+        // Curved background with welcome text
+        CurvedTopBackground()
+
+        // Login form positioned below the curve
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth()
+                .fillMaxSize()
+                .padding(horizontal = 32.dp)
+                .padding(top = 250.dp), // Adjusted to reduce white space
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LoginForm(
                 email = email.value,
