@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "Tandoori Treats",
+    "rating": 4.5,
+    "location": "Trichy Main Road",
+    "image_url": "https://picsum.photos/400/300/?restaurant,indian",
+    "timing": "10:00 AM - 11:00 PM",
+    "delivery_charge": 20,
+    "category": "Indian",
+    "menu": [
+      {
+        "name": "Chicken Biryani",
+        "price": 150
+      },
+      {
+        "name": "Paneer Butter Masala",
+        "price": 120
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Pizza Delight",
+    "rating": 4.2,
+    "location": "Cauvery Bridge",
+    "image_url": "https://picsum.photos/400/300/?restaurant,pizza",
+    "timing": "11:00 AM - 10:00 PM",
+    "delivery_charge": 30,
+    "category": "Italian",
+    "menu": [
+      {
+        "name": "Margherita Pizza",
+        "price": 200
+      },
+      {
+        "name": "Veggie Supreme",
+        "price": 220
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Chinese Bowl",
+    "rating": 4.3,
+    "location": "Chatram Bus Stand",
+    "image_url": "https://picsum.photos/400/300/?restaurant,chinese",
+    "timing": "12:00 PM - 11:30 PM",
+    "delivery_charge": 25,
+    "category": "Chinese",
+    "menu": [
+      {
+        "name": "Hakka Noodles",
+        "price": 110
+      },
+      {
+        "name": "Chicken Manchurian",
+        "price": 130
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Healthy Bites",
+    "rating": 4.8,
+    "location": "Srirangam",
+    "image_url": "https://picsum.photos/400/300/?restaurant,healthy",
+    "timing": "09:00 AM - 09:00 PM",
+    "delivery_charge": 15,
+    "category": "Healthy",
+    "menu": [
+      {
+        "name": "Quinoa Salad",
+        "price": 140
+      },
+      {
+        "name": "Grilled Chicken Wrap",
+        "price": 160
+      }
+    ]
+  }
+]
