@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.foodhub.data.local.CartItem
 import com.example.foodhub.ui.viewmodel.RestaurantViewModel
+import com.example.foodhub.util.UiState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,7 +36,9 @@ fun RestaurantDetailScreen(
     restaurantId: Int,
     viewModel: RestaurantViewModel = hiltViewModel()
 ) {
-    val restaurant = viewModel.restaurants.collectAsState().value.find { it.id == restaurantId }
+    // Observe the UiState of restaurants list
+    val restaurantState = viewModel.restaurants.collectAsState()
+
     val cartItems = viewModel.cartItems.collectAsState().value
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -46,99 +49,126 @@ fun RestaurantDetailScreen(
         viewModel.loadCartItems()
     }
 
-    restaurant?.let { rest ->
-        Box(modifier = Modifier.fillMaxSize()) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 60.dp) // Leave space for snackbar
-            ) {
-                RestaurantDetailTopBar(
-                    cartCount = cartItems.sumOf { it.quantity },
-                    onBackClick = { navController.popBackStack() },
-                    onCartClick = { /* TODO: Navigate to Cart */ }
-                )
-
-                AsyncImage(
-                    model = rest.image_url,
-                    contentDescription = rest.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                )
-
-                Text(
-                    text = rest.name,
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-
-                Text(
-                    text = "Rating: ${rest.rating} | Location: ${rest.location}",
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                rest.menu.forEach { menuItem ->
-                    val quantity = cartItems.find { it.name == menuItem.name }?.quantity ?: 0
-                    MenuItemRow(
-                        item = CartItem(name = menuItem.name, price = menuItem.price.toDouble()),
-                        quantity = quantity,
-                        onAddClick = {
-                            viewModel.addToCart(
-                                CartItem(name = menuItem.name, price = menuItem.price.toDouble())
-                            )
-                            // Show snackbar ONLY the first time this item is added
-                            if (!addedItemList.contains(menuItem.name)) {
-                                addedItemList.add(menuItem.name)
-                                scope.launch {
-                                    snackbarHostState.showSnackbar("${menuItem.name} added to cart")
-                                }
-                            }
-                        },
-                        onRemoveClick = {
-                            viewModel.decreaseCartItemQuantity(menuItem.name)
-
-                            val newQty = cartItems.find { it.name == menuItem.name }?.quantity ?: 0
-                            if (newQty <= 1) { // quantity just became 0 or 1 after decreasing
-                                scope.launch {
-                                    snackbarHostState.showSnackbar("${menuItem.name} removed from cart")
-                                }
-                                addedItemList.remove(menuItem.name) // Reset state so snackbar can show again next time
-                            }
-                        },
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                CartSection(
-                    cartItems = cartItems,
-                    onRemove = {
-                        viewModel.removeFromCart(it.id)
-                        scope.launch {
-                            snackbarHostState.showSnackbar("${it.name} removed from cart")
-                        }
-                    },
-                    onItemRemovedMessage = { itemName ->
-                        scope.launch {
-                            snackbarHostState.showSnackbar("$itemName removed from cart")
-                        }
-                        addedItemList.remove(itemName)
-                    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (val state = restaurantState.value) {
+            is UiState.Loading -> {
+                // Show loading indicator
+                androidx.compose.material3.CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
 
-            // Show Snackbar at the bottom manually
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            )
+            is UiState.Success -> {
+                // Find restaurant by id in the success data
+                val restaurant = state.data.find { it.id == restaurantId }
+
+                if (restaurant == null) {
+                    // Show not found message
+                    Text(
+                        text = "Restaurant not found",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                } else {
+                    // Show restaurant details UI (your existing UI)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(bottom = 60.dp)
+                    ) {
+                        RestaurantDetailTopBar(
+                            cartCount = cartItems.sumOf { it.quantity },
+                            onBackClick = { navController.popBackStack() },
+                            onCartClick = { /* TODO: Navigate to Cart */ }
+                        )
+
+                        AsyncImage(
+                            model = restaurant.image_url,
+                            contentDescription = restaurant.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp)
+                        )
+
+                        Text(
+                            text = restaurant.name,
+                            modifier = Modifier.padding(16.dp),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+
+                        Text(
+                            text = "Rating: ${restaurant.rating} | Location: ${restaurant.location}",
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        restaurant.menu.forEach { menuItem ->
+                            val quantity = cartItems.find { it.name == menuItem.name }?.quantity ?: 0
+                            MenuItemRow(
+                                item = CartItem(name = menuItem.name, price = menuItem.price.toDouble()),
+                                quantity = quantity,
+                                onAddClick = {
+                                    viewModel.addToCart(
+                                        CartItem(name = menuItem.name, price = menuItem.price.toDouble())
+                                    )
+                                    if (!addedItemList.contains(menuItem.name)) {
+                                        addedItemList.add(menuItem.name)
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar("${menuItem.name} added to cart")
+                                        }
+                                    }
+                                },
+                                onRemoveClick = {
+                                    viewModel.decreaseCartItemQuantity(menuItem.name)
+
+                                    val newQty = cartItems.find { it.name == menuItem.name }?.quantity ?: 0
+                                    if (newQty <= 1) {
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar("${menuItem.name} removed from cart")
+                                        }
+                                        addedItemList.remove(menuItem.name)
+                                    }
+                                },
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        CartSection(
+                            cartItems = cartItems,
+                            onRemove = {
+                                viewModel.removeFromCart(it.id)
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("${it.name} removed from cart")
+                                }
+                            },
+                            onItemRemovedMessage = { itemName ->
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("$itemName removed from cart")
+                                }
+                                addedItemList.remove(itemName)
+                            }
+                        )
+                    }
+                }
+            }
+
+            is UiState.Error -> {
+                Text(
+                    text = "Error: ${state.message}",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        )
     }
 }
+
