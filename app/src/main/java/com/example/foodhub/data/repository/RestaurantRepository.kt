@@ -27,6 +27,11 @@ class RestaurantRepository @Inject constructor(
         return cartDao.getAllCartItems()
     }
 
+    suspend fun getCartItemByName(name: String): CartItem? {
+        return cartDao.getCartItemByName(name)
+    }
+
+
     // Remove an item from the cart by its ID
     suspend fun removeFromCart(cartItemId: Int) {
         cartDao.removeFromCart(cartItemId)

@@ -21,28 +21,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.foodhub.components.RestaurantCard
 import com.example.foodhub.navigation.Screen
-import com.example.foodhub.ui.theme.FoodHubTheme
 import com.example.foodhub.ui.viewmodel.RestaurantViewModel
-import kotlinx.coroutines.delay
+import com.example.foodhub.util.UiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(navController: NavController, viewModel: RestaurantViewModel = hiltViewModel()) {
-    // Observe the restaurant data from the ViewModel
-    val restaurantList = viewModel.restaurants.collectAsState(emptyList())
-    val isLoading = restaurantList.value.isEmpty()
-
-    // Fetch data once when the screen is launched
-    LaunchedEffect(Unit) {
-        viewModel.fetchRestaurants()
-    }
+    // Observe the UiState from the ViewModel
+    val restaurantState = viewModel.restaurants.collectAsState()
 
     // State to handle refresh status
     var isRefreshing = remember { mutableStateOf(false) }
@@ -52,68 +43,74 @@ fun HomeScreen(navController: NavController, viewModel: RestaurantViewModel = hi
         refreshing = isRefreshing.value,
         onRefresh = {
             isRefreshing.value = true
+            viewModel.fetchRestaurants()
         }
     )
+
+    // Call fetchRestaurants when screen loads first time
+    LaunchedEffect(Unit) {
+        viewModel.fetchRestaurants()
+    }
 
     // Handle refresh effect properly
     if (isRefreshing.value) {
         LaunchedEffect(Unit) {
-            delay(1500) // Simulate network or data refresh
+            kotlinx.coroutines.delay(1500)
             isRefreshing.value = false
         }
     }
 
-    // Show CircularProgressIndicator if data is loading
-    if (isLoading) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                color = Color(0xFF6200EE),
-                strokeWidth = 6.dp
-            )
-        }
-    } else {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState)
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Title Text
-                Text(
-                    text = "Restaurants",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
+    ) {
+        when (val state = restaurantState.value) {
+            is UiState.Loading -> {
+                CircularProgressIndicator(
+                    color = Color(0xFF6200EE),
+                    strokeWidth = 6.dp,
+                    modifier = Modifier.align(Alignment.Center)
                 )
+            }
 
-                // LazyColumn for restaurant list
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
-                ) {
-                    items(restaurantList.value) { restaurant ->
-                        RestaurantCard(restaurant = restaurant) {
-                            navController.navigate("${Screen.RestaurantDetail.route}/${restaurant.id}")
+            is UiState.Success -> {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "Restaurants",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) {
+                        items(state.data) { restaurant ->
+                            RestaurantCard(restaurant = restaurant) {
+                                navController.navigate("${Screen.RestaurantDetail.route}/${restaurant.id}")
+                            }
                         }
                     }
                 }
             }
 
-            // Pull-to-refresh indicator
-            PullRefreshIndicator(
-                refreshing = isRefreshing.value,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
+            is UiState.Error -> {
+                Text(
+                    text = "Error: ${state.message}",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
+
+        PullRefreshIndicator(
+            refreshing = isRefreshing.value,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
 
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    FoodHubTheme {
-        HomeScreen(navController = NavController(LocalContext.current))
-    }
-}
+
+
