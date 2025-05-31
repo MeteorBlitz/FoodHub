@@ -50,18 +50,19 @@ class RestaurantViewModel @Inject constructor(
 
     // Add item to cart
     fun addToCart(newItem: CartItem) {
-        val updatedList = _cartItems.value.toMutableList()
-        val existingIndex = updatedList.indexOfFirst { it.name == newItem.name }
-
-        if (existingIndex != -1) {
-            val existingItem = updatedList[existingIndex]
-            updatedList[existingIndex] = existingItem.copy(quantity = existingItem.quantity + 1)
-        } else {
-            updatedList.add(newItem)
+        viewModelScope.launch {
+            val existingItem = repository.getCartItemByName(newItem.name)
+            if (existingItem != null) {
+                val updatedItem = existingItem.copy(quantity = existingItem.quantity + 1)
+                repository.updateCartItem(updatedItem)
+            } else {
+                repository.addToCart(newItem)
+            }
+            loadCartItems()
         }
-
-        _cartItems.value = updatedList
     }
+
+
 
     // Update existing cart item
     fun updateCartItem(cartItem: CartItem) {

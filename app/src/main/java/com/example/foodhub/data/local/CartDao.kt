@@ -20,6 +20,10 @@ interface CartDao {
     @Query("SELECT * FROM cart_items")
     suspend fun getAllCartItems(): List<CartItem>
 
+    @Query("SELECT * FROM cart_items WHERE name = :name LIMIT 1")
+    suspend fun getCartItemByName(name: String): CartItem?
+
+
     // Delete an item from the cart using its ID
     @Query("DELETE FROM cart_items WHERE id = :cartItemId")
     suspend fun removeFromCart(cartItemId: Int)

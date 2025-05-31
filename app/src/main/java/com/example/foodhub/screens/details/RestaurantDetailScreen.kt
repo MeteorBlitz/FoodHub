@@ -137,12 +137,13 @@ fun RestaurantDetailScreen(
 
                         CartSection(
                             cartItems = cartItems,
-                            onRemove = {
-                                viewModel.removeFromCart(it.id)
+                            onRemove = { item->
+                                viewModel.removeFromCart(item.id)
                                 scope.launch {
-                                    snackbarHostState.showSnackbar("${it.name} removed from cart")
+                                    snackbarHostState.showSnackbar("${item.name} removed from cart")
                                 }
-                            },
+                            }
+                            ,
                             onItemRemovedMessage = { itemName ->
                                 scope.launch {
                                     snackbarHostState.showSnackbar("$itemName removed from cart")
