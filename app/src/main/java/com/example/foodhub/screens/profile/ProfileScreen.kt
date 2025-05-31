@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodhub.navigation.Screen
@@ -38,6 +39,7 @@ fun ProfileScreen(
     val isLoggedIn = viewModel.isLoggedIn.collectAsState().value
     val name = viewModel.userName.collectAsState().value
     val email = viewModel.userEmail.collectAsState().value
+    val context = LocalContext.current
 
     LaunchedEffect(isLoggedIn) {
         if (!isLoggedIn) {
@@ -97,7 +99,7 @@ fun ProfileScreen(
                 iconTint = MaterialTheme.colorScheme.error,
                 textColor = MaterialTheme.colorScheme.error
             ) {
-                viewModel.logout()
+                viewModel.logout(context)
             }
         }
     }

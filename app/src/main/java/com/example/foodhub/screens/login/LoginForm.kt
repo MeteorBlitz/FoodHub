@@ -1,7 +1,10 @@
 package com.example.foodhub.screens.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,6 +33,7 @@ fun LoginForm(
     password: String,
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
+    onGoogleSignInClick: () -> Unit,
     buttonScale: Float
 ) {
     Column(
@@ -89,6 +93,14 @@ fun LoginForm(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
         ) {
             Text(text = "Login", style = MaterialTheme.typography.titleMedium)
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            GoogleSignInButton(onClick = onGoogleSignInClick)
         }
     }
 }

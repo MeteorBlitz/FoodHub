@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -87,5 +88,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)     // Room KTX for coroutine support
     //datastore
     implementation(libs.androidx.datastore.preferences)
+    //Firebase
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.play.services.auth)
 
 }

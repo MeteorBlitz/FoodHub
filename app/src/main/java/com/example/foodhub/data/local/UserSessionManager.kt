@@ -16,19 +16,26 @@ class UserSessionManager(context: Context) {
 
     private object PreferencesKeys {
         val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+        val LOGIN_TYPE = stringPreferencesKey("login_type")
         val EMAIL = stringPreferencesKey("email")
         val USER_ID = stringPreferencesKey("user_id")
         val USER_NAME = stringPreferencesKey("user_name")
     }
 
     // Save login status, email, and userId
-    suspend fun saveLoginStatus(isLoggedIn: Boolean, email: String, userId: String, userName: String) {
+    suspend fun saveLoginStatus(
+        isLoggedIn: Boolean,
+        email: String,
+        userId: String,
+        userName: String,
+        loginType: String) {
         Log.d("UserSessionManager", "Saving login status to DataStore: $isLoggedIn")
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_LOGGED_IN] = isLoggedIn
             preferences[PreferencesKeys.EMAIL] = email
             preferences[PreferencesKeys.USER_ID] = userId
             preferences[PreferencesKeys.USER_NAME] = userName
+            preferences[PreferencesKeys.LOGIN_TYPE] = loginType
         }
     }
 
@@ -36,6 +43,11 @@ class UserSessionManager(context: Context) {
     val isLoggedInFlow: Flow<Boolean> = dataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.IS_LOGGED_IN] == true
+        }
+
+    val loginTypeFlow: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.LOGIN_TYPE] ?: "normal"
         }
 
     // Get saved email
