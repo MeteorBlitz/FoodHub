@@ -5,7 +5,7 @@ The app is currently under active development, and more features and UI improvem
 ✨ Features Completed
 🔥 Splash Screen with Logo Animation
 
-🔑 Login Screen with DataStore to store login details
+🔑 Login Screen with DataStore to save user login details, now also supports Google Sign-In using Firebase Authentication
 
 🏠 Home Screen displaying restaurants and food items
 
