@@ -125,6 +125,7 @@ fun LoginScreen(
                     googleSignInLoading.value = true
                     googleSignInLauncher.launch(authViewModel.getGoogleSignInIntent())
                 },
+                onSignUpClick = { navController.navigate(Screen.Register.route) },
                 buttonScale = buttonScale.value
             )
         }

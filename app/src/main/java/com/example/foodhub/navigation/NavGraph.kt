@@ -14,6 +14,7 @@ import com.example.foodhub.screens.login.LoginScreen
 import com.example.foodhub.screens.profile.ProfileScreen
 import com.example.foodhub.screens.SplashScreen
 import com.example.foodhub.screens.details.RestaurantDetailScreen
+import com.example.foodhub.screens.register.RegisterScreen
 import com.example.foodhub.ui.viewmodel.ProfileViewModel
 import com.example.foodhub.ui.viewmodel.ProfileViewModelFactory
 
@@ -36,6 +37,7 @@ fun AppNavGraph(navController: NavHostController, modifier: Modifier = Modifier)
         // Non-bottom bar screens
         composable(Screen.Splash.route) { SplashScreen(navController,userSessionManager) }
         composable(Screen.Login.route) { LoginScreen(navController,userSessionManager) }
+        composable(Screen.Register.route) { RegisterScreen(navController) }
 
         // Bottom bar screens
         composable(BottomBarScreen.Home.route) { HomeScreen(navController) }
