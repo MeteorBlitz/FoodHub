@@ -5,15 +5,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.foodhub.navigation.Screen
 import com.example.foodhub.screens.login.CurvedTopBackground
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun RegisterScreen(
@@ -30,10 +24,20 @@ fun RegisterScreen(
     val name = remember { mutableStateOf("") }
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+
+    val nameError = remember { mutableStateOf("") }
+    val emailError = remember { mutableStateOf("") }
+    val passwordError = remember { mutableStateOf("") }
+
+    val isLoading = remember { mutableStateOf(false) }
     val buttonScale = remember { Animatable(1f) }
 
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val auth = FirebaseAuth.getInstance()
+
+    fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
 
     // Animate button
     LaunchedEffect(name.value, email.value, password.value) {
@@ -56,16 +60,57 @@ fun RegisterScreen(
         ) {
             RegisterForm(
                 name = name.value,
-                onNameChange = { name.value = it },
+                onNameChange = { if (it.length <= 30) name.value = it },
+                nameError = nameError.value,
                 email = email.value,
-                onEmailChange = { email.value = it },
+                onEmailChange = { if (it.length <= 50) email.value = it },
+                emailError = emailError.value,
                 password = password.value,
-                onPasswordChange = { password.value = it },
+                onPasswordChange = { if (it.length <= 12) password.value = it },
+                passwordError = passwordError.value,
                 onRegisterClick = {
-                    // TODO: Replace with real Firebase logic later
-                    Toast.makeText(context, "Register clicked!", Toast.LENGTH_SHORT).show()
+                    nameError.value = ""
+                    emailError.value = ""
+                    passwordError.value = ""
+
+                    if (name.value.isBlank()) {
+                        nameError.value = "Name is required"
+                        return@RegisterForm
+                    }
+
+                    if (email.value.isBlank()) {
+                        emailError.value = "Email is required"
+                        return@RegisterForm
+                    } else if (!isValidEmail(email.value)) {
+                        emailError.value = "Invalid email format"
+                        return@RegisterForm
+                    }
+
+                    if (password.value.isBlank()) {
+                        passwordError.value = "Password is required"
+                        return@RegisterForm
+                    } else if (password.value.length < 6) {
+                        passwordError.value = "Minimum 6 characters"
+                        return@RegisterForm
+                    }
+
+                    isLoading.value = true
+                    auth.createUserWithEmailAndPassword(email.value, password.value)
+                        .addOnCompleteListener { task ->
+                            isLoading.value = false
+                            if (task.isSuccessful) {
+                                Toast.makeText(context, "Registered successfully", Toast.LENGTH_SHORT).show()
+                                navController.navigate(Screen.Login.route) {
+                                    popUpTo(Screen.Login.route) { inclusive = true }
+                                }
+                            } else {
+                                val errorText = task.exception?.message ?: "Registration failed"
+                                Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
+                            }
+                        }
                 },
                 buttonScale = buttonScale.value,
+                isLoading = isLoading.value,
                 onLoginInsteadClick = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
