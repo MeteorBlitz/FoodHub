@@ -1,4 +1,4 @@
-package com.example.foodhub.screens.login
+package com.example.foodhub.screens.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -29,22 +29,23 @@ import androidx.compose.ui.unit.dp
 import com.example.foodhub.components.FoodHubLogo
 
 @Composable
-fun LoginForm(
+fun RegisterForm(
+    name: String,
+    onNameChange: (String) -> Unit,
     email: String,
     onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
-    onLoginClick: () -> Unit,
-    onGoogleSignInClick: () -> Unit,
-    onSignUpClick: () -> Unit,
-    buttonScale: Float
+    onRegisterClick: () -> Unit,
+    buttonScale: Float,
+    onLoginInsteadClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(32.dp)
     ) {
-        // Logo and title
+        // App Logo
         Image(
             painter = rememberVectorPainter(FoodHubLogo),
             contentDescription = "App Logo",
@@ -53,16 +54,26 @@ fun LoginForm(
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 16.dp)
         )
+
         Text(
             text = "FoodHub",
             style = MaterialTheme.typography.headlineMedium,
             color = Color(0xFF6200EE),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(bottom = 24.dp)
+                .padding(bottom = 16.dp)
         )
 
-        // Email input field
+        OutlinedTextField(
+            value = name,
+            onValueChange = onNameChange,
+            label = { Text("Name", color = Color.Gray) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
+            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE))
+        )
+
         OutlinedTextField(
             value = email,
             onValueChange = onEmailChange,
@@ -70,10 +81,9 @@ fun LoginForm(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE)),
+            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE))
         )
 
-        // Password input field
         OutlinedTextField(
             value = password,
             onValueChange = onPasswordChange,
@@ -82,12 +92,11 @@ fun LoginForm(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 32.dp),
-            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE)),
+            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE))
         )
 
-        // Login button with scaling animation
         Button(
-            onClick = onLoginClick,
+            onClick = onRegisterClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .scale(buttonScale)
@@ -95,28 +104,18 @@ fun LoginForm(
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
         ) {
-            Text(text = "Login", style = MaterialTheme.typography.titleMedium)
+            Text("Register", style = MaterialTheme.typography.titleMedium)
         }
+
         Spacer(modifier = Modifier.height(24.dp))
 
-        Row(modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            GoogleSignInButton(onClick = onGoogleSignInClick)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text("Don't have an account?")
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Text("Already have an account?")
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = "Sign Up",
+                text = "Login",
                 color = Color(0xFF6200EE),
-                modifier = Modifier.clickable { onSignUpClick() }
+                modifier = Modifier.clickable(onClick = onLoginInsteadClick)
             )
         }
     }

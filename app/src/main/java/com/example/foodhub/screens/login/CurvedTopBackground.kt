@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CurvedTopBackground() {
+fun CurvedTopBackground(title: String = "Welcome Back!") {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +44,7 @@ fun CurvedTopBackground() {
         }
 
         Text(
-            text = "Welcome Back!",
+            text = title,
             color = Color.White,
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier
