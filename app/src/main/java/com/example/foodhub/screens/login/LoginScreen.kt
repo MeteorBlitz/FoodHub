@@ -8,8 +8,16 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +31,6 @@ import com.example.foodhub.navigation.Screen.BottomBarScreen
 import com.example.foodhub.ui.viewmodel.AuthState
 import com.example.foodhub.ui.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -33,17 +40,14 @@ fun LoginScreen(
 ) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+    val emailError = remember { mutableStateOf<String?>(null) }
+    val passwordError = remember { mutableStateOf<String?>(null) }
     val buttonScale = remember { Animatable(1f) }
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
 
     val authState by authViewModel.authState.collectAsState()
     val googleSignInLoading = remember { mutableStateOf(false) }
 
-    val validEmail = "test@foodhub.com"
-    val validPassword = "123456"
-
-    // Google launcher
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -56,17 +60,15 @@ fun LoginScreen(
         }
     }
 
-    // Init Google Client
     LaunchedEffect(Unit) {
         authViewModel.initGoogleSignIn(context)
     }
 
-    // Auth state handling
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Success -> {
                 val data = authState as AuthState.Success
-                userSessionManager.saveLoginStatus(true, data.email ?: "", data.userId, data.userName ?: "",loginType = "google" )
+                userSessionManager.saveLoginStatus(true, data.email ?: "", data.userId, data.userName ?: "", loginType = "normal")
                 delay(300)
                 Toast.makeText(context, "Welcome, ${data.userName ?: "User"}!", Toast.LENGTH_LONG).show()
                 navController.navigate(BottomBarScreen.Home.route) {
@@ -82,21 +84,28 @@ fun LoginScreen(
         }
     }
 
-    // Fake login check
     val handleLogin = {
-        if (email.value == validEmail && password.value == validPassword) {
-            coroutineScope.launch {
-                userSessionManager.saveLoginStatus(true, email.value, "user123", "testName",loginType = "normal" )
-            }
-            navController.navigate(BottomBarScreen.Home.route) {
-                popUpTo(Screen.Login.route) { inclusive = true }
-            }
+        var isValid = true
+
+        if (email.value.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {
+            emailError.value = "Enter valid email"
+            isValid = false
         } else {
-            Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+            emailError.value = null
+        }
+
+        if (password.value.isBlank() || password.value.length < 6) {
+            passwordError.value = "Minimum 6 characters"
+            isValid = false
+        } else {
+            passwordError.value = null
+        }
+
+        if (isValid) {
+            authViewModel.loginWithEmail(email.value.trim(), password.value.trim())
         }
     }
 
-    // Animate button
     LaunchedEffect(email.value, password.value) {
         buttonScale.animateTo(1.1f, tween(300, easing = FastOutSlowInEasing))
         buttonScale.animateTo(1f, tween(300))
@@ -112,7 +121,7 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 32.dp, top = 240.dp, end = 32.dp, bottom = 0.dp),
+                .padding(start = 32.dp, top = 240.dp, end = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LoginForm(
@@ -126,7 +135,9 @@ fun LoginScreen(
                     googleSignInLauncher.launch(authViewModel.getGoogleSignInIntent())
                 },
                 onSignUpClick = { navController.navigate(Screen.Register.route) },
-                buttonScale = buttonScale.value
+                buttonScale = buttonScale.value,
+                emailError = emailError.value,
+                passwordError = passwordError.value
             )
         }
     }

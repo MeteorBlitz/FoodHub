@@ -12,19 +12,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.foodhub.components.FoodHubLogo
 
@@ -37,8 +44,11 @@ fun LoginForm(
     onLoginClick: () -> Unit,
     onGoogleSignInClick: () -> Unit,
     onSignUpClick: () -> Unit,
-    buttonScale: Float
+    buttonScale: Float,
+    emailError: String?,
+    passwordError: String?
 ) {
+    val showPassword = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,25 +77,43 @@ fun LoginForm(
             value = email,
             onValueChange = onEmailChange,
             label = { Text("Email", color = Color.Gray) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE)),
+            modifier = Modifier.fillMaxWidth(),
+            isError = emailError != null,
+            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE))
         )
+        if (emailError != null) {
+            Text(text = emailError, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+        }
 
-        // Password input field
+        Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
             value = password,
-            onValueChange = onPasswordChange,
+            onValueChange = {
+                if (it.length <= 8) onPasswordChange(it)
+            },
             label = { Text("Password", color = Color.Gray) },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp),
-            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE)),
+            visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                Icon(
+                    imageVector = if (showPassword.value) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                    contentDescription = if (showPassword.value) "Hide password" else "Show password",
+                    tint = Color.Gray,
+                    modifier = Modifier.clickable {
+                        showPassword.value = !showPassword.value
+                    }
+                )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            isError = passwordError != null,
+            colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Color(0xFF6200EE))
         )
+        if (passwordError != null) {
+            Text(text = passwordError, color = Color.Red, style = MaterialTheme.typography.bodySmall)
+        }
 
-        // Login button with scaling animation
+        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = onLoginClick,
             modifier = Modifier
@@ -97,6 +125,7 @@ fun LoginForm(
         ) {
             Text(text = "Login", style = MaterialTheme.typography.titleMedium)
         }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         Row(modifier = Modifier

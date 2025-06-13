@@ -79,17 +79,21 @@ class AuthViewModel : ViewModel() {
         _authState.value = AuthState.Idle
     }
 
-    fun signOut() {
+    fun loginWithEmail(email: String, password: String) {
         viewModelScope.launch {
+            _authState.value = AuthState.Loading
             try {
-                auth.signOut()
-                googleSignInClient.signOut().await()
-                _authState.value = AuthState.Idle
-                Log.d("AuthViewModel", "User signed out successfully.")
+                val result = auth.signInWithEmailAndPassword(email, password).await()
+                val user = result.user
+                if (user != null) {
+                    _authState.value = AuthState.Success(user.uid, user.email, user.displayName)
+                } else {
+                    _authState.value = AuthState.Error("Login failed. User is null.")
+                }
             } catch (e: Exception) {
-                Log.e("AuthViewModel", "Sign-Out error: ${e.message}")
-                _authState.value = AuthState.Error("Sign out failed: ${e.message ?: "Unknown error"}")
+                _authState.value = AuthState.Error(e.message ?: "Login failed.")
             }
         }
     }
+
 }
