@@ -6,17 +6,6 @@ The app is currently under active development, and more features and UI improvem
 
 ---
 
-## 🔐 Demo Login Details
-
-To log in and test the app, use these demo credentials on the login screen:
-
-- **Email:** `test@foodhub.com`  
-- **Password:** `123456`
-
-> 💡 This is a static demo login. Firebase Email/Password registration is **not yet implemented**.
-
----
-
 ## 🍽 Demo Restaurant Data
 
 By default, the app fetches restaurant data using a Mocky.io URL.
@@ -32,14 +21,15 @@ To fix this:
 
 > This lets you keep testing the app with your own fresh mock data link.
 
-
 ---
 
 ## ✨ Features Completed
 
 - 🔥 Splash Screen with Logo Animation  
+- 🔐 Firebase-based Login & Registration  
 - 🔑 Login Screen with DataStore to save login state  
-  ➕ Google Sign-In using Firebase Authentication  
+- 🧾 Register Screen with Firebase Auth & User Profile update  
+- ➕ Google Sign-In using Firebase Authentication  
 - 🏠 Home Screen displaying restaurants and food items  
 - 🍽️ Details Screen for individual restaurant/food  
 - 👤 Profile Screen with Logout  
@@ -62,6 +52,7 @@ To fix this:
 - Retrofit  
 - Room Database  
 - DataStore  
+- Firebase Authentication  
 
 ---
 
@@ -84,6 +75,7 @@ To fix this:
   <tr>
     <td align="center"><img src="screenshots/splash.png" width="160"/></td>
     <td align="center"><img src="screenshots/login.png" width="160"/></td>
+    <td align="center"><img src="screenshots/register.png" width="160"/></td>
     <td align="center"><img src="screenshots/home.png" width="160"/></td>
     <td align="center"><img src="screenshots/details.png" width="160"/></td>
     <td align="center"><img src="screenshots/profile.png" width="160"/></td>
@@ -91,6 +83,7 @@ To fix this:
   <tr>
     <td align="center">Splash</td>
     <td align="center">Login</td>
+    <td align="center">Register</td>
     <td align="center">Home</td>
     <td align="center">Details</td>
     <td align="center">Profile</td>
