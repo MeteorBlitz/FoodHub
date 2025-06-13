@@ -6,6 +6,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import androidx.navigation.NavController
 import com.example.foodhub.navigation.Screen
 import com.example.foodhub.screens.login.CurvedTopBackground
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 
 @Composable
 fun RegisterScreen(
@@ -97,13 +99,27 @@ fun RegisterScreen(
                     isLoading.value = true
                     auth.createUserWithEmailAndPassword(email.value, password.value)
                         .addOnCompleteListener { task ->
-                            isLoading.value = false
                             if (task.isSuccessful) {
-                                Toast.makeText(context, "Registered successfully", Toast.LENGTH_SHORT).show()
-                                navController.navigate(Screen.Login.route) {
-                                    popUpTo(Screen.Login.route) { inclusive = true }
-                                }
+                                val user = auth.currentUser
+                                val profileUpdates = UserProfileChangeRequest.Builder()
+                                    .setDisplayName(name.value.trim())
+                                    .build()
+
+                                user?.updateProfile(profileUpdates)
+                                    ?.addOnCompleteListener { profileTask ->
+                                        if (profileTask.isSuccessful) {
+                                            Toast.makeText(context, "Registered successfully", Toast.LENGTH_SHORT).show()
+                                            isLoading.value = false
+                                            navController.navigate(Screen.Login.route) {
+                                                popUpTo(Screen.Login.route) { inclusive = true }
+                                            }
+                                        } else {
+                                            isLoading.value = false
+                                            Toast.makeText(context, "Name not saved", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                             } else {
+                                isLoading.value = false
                                 val errorText = task.exception?.message ?: "Registration failed"
                                 Toast.makeText(context, errorText, Toast.LENGTH_LONG).show()
                             }
